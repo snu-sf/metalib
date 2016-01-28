@@ -24,7 +24,6 @@ Require Import CoqFSetDecide.
 Require Import CoqListFacts.
 Require Import LibTactics.
 
-
 (* *********************************************************************** *)
 (** * Implementation *)
 
@@ -131,7 +130,7 @@ Fixpoint dom
   : KeySet.t :=
   match E with
     | nil => empty
-    | VarAsn x _ :: E' => add x (dom E')
+    | VarAsn _ x _ :: E' => add x (dom E')
     | _ :: E' => dom E'
   end.
 
@@ -142,7 +141,7 @@ Fixpoint get
   : option A :=
   match E with
     | nil => None
-    | VarAsn y c :: F =>  if X.eq_dec x y then Some c else get x F
+    | VarAsn _ y c :: F =>  if X.eq_dec x y then Some c else get x F
     | _ :: F => get x F
   end.
 
@@ -185,8 +184,8 @@ Definition map
   (A B C D : Type) (f : A -> C) (g : B -> D) (E : list (asn A B))
   : list (asn C D) :=
   List.map (fun b => match b with
-                       | VarAsn x a => VarAsn _ x (f a)
-                       | AltAsn b => AltAsn _ _ (g b)
+                       | VarAsn _ x a => VarAsn _ x (f a)
+                       | AltAsn _ _ b => AltAsn _ _ (g b)
                      end) E.
 
 (** [map_var] is like [map] except that it leave [AltAsn]s untouched. *)
@@ -204,8 +203,8 @@ Fixpoint erase_var
   : list B :=
   match E with
     | nil => nil
-    | VarAsn x a :: F => erase_var F
-    | AltAsn b :: F => b :: erase_var F
+    | VarAsn _ x a :: F => erase_var F
+    | AltAsn _ _ b :: F => b :: erase_var F
   end.
 
 (** [uniq] is unary predicate that holds if and only if each key is
@@ -267,7 +266,7 @@ Section ListProperties.
 
   Lemma in_one_iff :
     List.In x (one y) <-> x = y.
-  Proof. clear. split. inversion 1; intuition. constructor; intuition. Qed.
+  Proof. clear. split. inversion 1; intuition. inversion H0. constructor; intuition. Qed.
 
   Lemma in_app_iff :
     List.In x (l1 ++ l2) <-> List.In x l1 \/ List.In x l2.
@@ -871,18 +870,18 @@ Section BindsProperties.
   Lemma binds_one_1 :
     binds x a (y ~ a' :> B) ->
     x = y.
-  Proof. clear. intros H. inversion H; intuition congruence. Qed.
+  Proof. clear. intros H. inversion H; try intuition congruence. inversion H0. Qed.
 
   Lemma binds_one_2 :
     binds x a (y ~ a' :> B) ->
     a = a'.
-  Proof. clear. intros H. inversion H; intuition congruence. Qed.
+  Proof. clear. intros H. inversion H; try intuition congruence. inversion H0. Qed.
 
   Lemma binds_one_3 :
     x = y ->
     a = a' ->
     binds x a (y ~ a' :> B).
-  Proof. clear. unfold binds. intros. simpl. left. congruence. Qed.
+  Proof. clear. unfold binds. intros. simpl. left. try congruence. Qed.
 
   Lemma binds_one_iff :
     binds x a (y ~ a' :> B) <-> x = y /\ a = a'.

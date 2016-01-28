@@ -1,3 +1,7 @@
-/*.vo
-/*.glob
-/*.aux
+*.v.d
+*.vo
+*.glob
+*.aux
+
+_CoqProject
+Makefile.coq
