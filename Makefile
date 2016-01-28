@@ -96,7 +96,7 @@ $(DOCDIR):
 ############################################################################
 
 .depend: $(VFILES) Makefile
-	$(COQDEP) $(INCFLAGS) $(VFILES) > .depend
+	$(COQDEP) $(VFILES) > .depend
 
 include .depend
 

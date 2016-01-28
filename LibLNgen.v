@@ -7,6 +7,7 @@
 
 (** A library of code for supporting LNgen. *)
 
+Require Import Coq.omega.Omega.
 Require Export LibDefaultSimp.
 Require Import Metatheory.
 

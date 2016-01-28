@@ -8,6 +8,7 @@
 
 Require Import Coq.Arith.Arith.
 Require Import Coq.Arith.Max.
+Require Import Coq.omega.Omega.
 Require Import Coq.Classes.EquivDec.
 Require Import Coq.Lists.List.
 Require Import Coq.Structures.DecidableTypeEx.
