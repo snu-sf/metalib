@@ -18,6 +18,7 @@ Require Import CoqListFacts.
 Require Import FSetExtra.
 Require Import FSetWeakNotin.
 Require Import LibTactics.
+Require Import Morphisms.
 
 
 (* ********************************************************************** *)
@@ -38,6 +39,13 @@ Module Type ATOM.
     forall (xs : list atom), {x : atom | ~ List.In x xs}.
 
   Hint Resolve eq_atom_dec.
+
+  (* I want lt to be visible from outside, so I put here, not AtomImpl *)
+  Parameter atom_lt: atom -> atom -> Prop.
+  Parameter atom_lt_strorder : StrictOrder lt.
+  Parameter atom_compare: atom -> atom -> comparison.
+  Parameter atom_compare_spec : forall x y : atom,
+      CompareSpec (eq x y) (atom_lt x y) (atom_lt y x) (atom_compare x y).
 
 End ATOM.
 
@@ -81,7 +89,28 @@ Module AtomImpl : ATOM.
 
   (* end hide *)
 
+  Definition atom_lt: atom -> atom -> Prop := Nat.lt.
+
+  Lemma atom_lt_strorder : StrictOrder lt.
+  Proof.
+    unfold lt.
+    eapply Nat.lt_strorder; eauto.
+  Qed.
+
+  Definition atom_compare: atom -> atom -> comparison := Nat.compare.
+
+  Lemma atom_compare_spec : forall x y : atom,
+      CompareSpec (eq x y) (atom_lt x y) (atom_lt y x) (atom_compare x y).
+  Proof.
+    unfold atom_compare, atom_lt.
+    repeat intro. eapply Nat.compare_spec; eauto.
+  Qed.
+
 End AtomImpl.
+
+(* Module is_ordered_check : Orders.OrderedType := AtomImpl. *)
+(* Reset is_ordered_check. *)
+
 
 (** We make [atom], [eq_atom_dec], and [atom_fresh_for_list] available
     without qualification. *)
