@@ -42,7 +42,7 @@ Module Type ATOM.
 
   (* I want lt to be visible from outside, so I put here, not AtomImpl *)
   Parameter atom_lt: atom -> atom -> Prop.
-  Parameter atom_lt_strorder : StrictOrder lt.
+  Parameter atom_lt_strorder : StrictOrder atom_lt.
   Parameter atom_compare: atom -> atom -> comparison.
   Parameter atom_compare_spec : forall x y : atom,
       CompareSpec (eq x y) (atom_lt x y) (atom_lt y x) (atom_compare x y).
@@ -91,7 +91,7 @@ Module AtomImpl : ATOM.
 
   Definition atom_lt: atom -> atom -> Prop := Nat.lt.
 
-  Lemma atom_lt_strorder : StrictOrder lt.
+  Lemma atom_lt_strorder : StrictOrder atom_lt.
   Proof.
     unfold lt.
     eapply Nat.lt_strorder; eauto.
